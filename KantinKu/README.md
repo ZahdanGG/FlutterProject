@@ -1,4 +1,4 @@
-# Warungku — Figma → Flutter (work in progress)
+# KantinKu — Figma → Flutter (work in progress)
 
 Source: Figma file `0joteiJGmtWqaRhlQh23AP` (16 frames, all 412 px wide, Inter, navy `#002e63` on `#faf8f5`).
 
@@ -7,7 +7,7 @@ Source: Figma file `0joteiJGmtWqaRhlQh23AP` (16 frames, all 412 px wide, Inter, 
 ## Run
 
 ```sh
-flutter create --project-name warungku .   # generates android/ ios/ web/ (keeps lib/ and pubspec.yaml)
+flutter create --project-name KantinKu .   # generates android/ ios/ web/ (keeps lib/ and pubspec.yaml)
 sh tool/download_assets.sh                 # food photos; Figma links expire ~2026-10-15
 flutter pub get
 flutter run
@@ -27,7 +27,7 @@ I could not run the Flutter SDK where this was written, so the code has **not be
 
 ## Not implemented (Figma data not readable yet)
 
-Detail Promo, Riwayat, Rekomendasi, QRIS Payment, Order Status, Browse — Direktori Warung, Warung Detail — Menu, Me — Profil, Profil Saya, Metode Pembayaran, Voucher Saya.
+Detail Promo, Riwayat, Rekomendasi, QRIS Payment, Order Status, Browse — Direktori Kantin, Kantin Detail — Menu, Me — Profil, Profil Saya, Metode Pembayaran, Voucher Saya.
 Their routes already exist in `lib/navigation/routes.dart` (`AppScreen`), so each only needs its screen file once the design data is available.
 
 ## Working behavior
