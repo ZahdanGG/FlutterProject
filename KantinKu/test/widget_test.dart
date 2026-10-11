@@ -11,7 +11,7 @@ import 'package:warungku/main.dart';
 
 void main() {
   testWidgets('App loads Beranda screen', (WidgetTester tester) async {
-    await tester.pumpWidget(const WarungkuApp());
+    await tester.pumpWidget(const KantinKuApp());
     expect(find.text('Jakarta Barat'), findsOneWidget);
   });
 }

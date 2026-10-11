@@ -10,17 +10,17 @@ Future<void> main() async {
   final state = await AppState.load();
   runApp(ChangeNotifierProvider<AppState>.value(
     value: state,
-    child: const WarungkuApp(),
+    child: const KantinKuApp(),
   ));
 }
 
-class WarungkuApp extends StatelessWidget {
-  const WarungkuApp({super.key});
+class KantinKuApp extends StatelessWidget {
+  const KantinKuApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Warungku',
+      title: 'KantinKu',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: false,
