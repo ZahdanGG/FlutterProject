@@ -1,5 +1,5 @@
-name: warungku
-description: WarungKu - aplikasi pemesanan makanan UMKM
+name: KantinKu
+description: KantinKu - aplikasi pemesanan makanan UMKM
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -18,9 +18,16 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
   assets:
-    - assets/images/
+    - assets/images/foods/
+    - assets/images/canteens/
+    - assets/images/branding/
+    - assets/images/avatars/

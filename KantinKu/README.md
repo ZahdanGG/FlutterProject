@@ -1,7 +1,5 @@
 # KantinKu — Figma → Flutter (work in progress)
 
-Source: Figma file `0joteiJGmtWqaRhlQh23AP` (16 frames, all 412 px wide, Inter, navy `#002e63` on `#faf8f5`).
-
 **Status: 5 of 16 frames implemented.** The Figma MCP hit its Starter-plan limit (20 read calls/month), so the other 11 frames could not be read. Nothing was invented for them; they open a blank "belum diimplementasikan" screen.
 
 ## Run
@@ -27,7 +25,7 @@ I could not run the Flutter SDK where this was written, so the code has **not be
 
 ## Not implemented (Figma data not readable yet)
 
-Detail Promo, Riwayat, Rekomendasi, QRIS Payment, Order Status, Browse — Direktori Kantin, Kantin Detail — Menu, Me — Profil, Profil Saya, Metode Pembayaran, Voucher Saya.
+Detail Promo, Riwayat, Rekomendasi, QRIS Payment, Order Status, Browse — Direktori Warung, Warung Detail — Menu, Me — Profil, Profil Saya, Metode Pembayaran, Voucher Saya.
 Their routes already exist in `lib/navigation/routes.dart` (`AppScreen`), so each only needs its screen file once the design data is available.
 
 ## Working behavior
