@@ -1,5 +1,18 @@
 import 'package:flutter/material.dart';
 
+/// Forms have a small, bounded set of fields. Keep every field mounted so
+/// validation includes fields above/below the viewport when the keyboard opens.
+class FormScrollView extends StatelessWidget {
+  const FormScrollView({super.key, required this.children, this.padding = const EdgeInsets.all(20)});
+  final List<Widget> children;
+  final EdgeInsetsGeometry padding;
+  @override
+  Widget build(BuildContext context) => SingleChildScrollView(
+    padding: padding,
+    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+  );
+}
+
 class AppCard extends StatelessWidget {
   const AppCard({super.key, required this.child, this.padding = const EdgeInsets.all(16), this.onTap});
   final Widget child;
@@ -138,8 +151,8 @@ Future<bool> confirmAction(BuildContext context, {required String title, require
 Future<void> foundationNotice(BuildContext context) => showDialog<void>(
   context: context,
   builder: (context) => AlertDialog(
-    title: const Text('Preview UI'),
-    content: const Text('Halaman ini masih dalam tahap pengembangan'),
-    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Oke'))],
+    title: const Text('Preview UI — Tahap 1'),
+    content: const Text('Halaman ini mendemonstrasikan desain dan navigasi. Autentikasi serta transaksi demo tersedia pada ZIP 2. Tidak ada transaksi yang dibuat.'),
+    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Mengerti'))],
   ),
 );

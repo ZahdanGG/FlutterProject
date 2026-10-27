@@ -3,6 +3,8 @@ import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/register_role_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
+import '../features/auth/presentation/screens/reset_password_screen.dart';
+import '../features/auth/presentation/screens/auth_success_screen.dart';
 import '../features/cart/presentation/screens/cart_screen.dart';
 import '../features/catalog/models/canteen.dart';
 import '../features/catalog/models/food.dart';
@@ -25,6 +27,7 @@ import '../features/settings/presentation/screens/help_screen.dart';
 import '../features/settings/presentation/screens/about_screen.dart';
 import '../features/settings/presentation/screens/privacy_screen.dart';
 import 'app_shell.dart';
+import 'app_scope.dart';
 import 'foundation_screens.dart';
 
 abstract final class AppRouter {
@@ -46,6 +49,7 @@ abstract final class AppRouter {
       '/favorites' => const FoundationFeatureScreen(title: 'Favorit'),
       '/notifications' => const FoundationFeatureScreen(title: 'Notifikasi'),
       '/orders' => const OrderScreen(),
+      '/order-history' => const OrderScreen(initialHistory: true),
       '/order-detail' => OrderDetailScreen(orderId: orderId),
       '/receipt' => ReceiptScreen(orderId: orderId),
       '/pickup-code' => PickupCodeScreen(orderId: orderId),
@@ -60,6 +64,8 @@ abstract final class AppRouter {
       '/register-role' => const RegisterRoleScreen(),
       '/register' => RegisterScreen(role: args is String ? args : 'Mahasiswa'),
       '/forgot-password' => const ForgotPasswordScreen(),
+      '/reset-password' when args is Map<String, String> => ResetPasswordScreen(email: args['email'] ?? '', token: args['token'] ?? ''),
+      '/auth-success' => const AuthSuccessScreen(),
       '/edit-profile' => const EditProfileScreen(),
       '/security' => const SecurityScreen(),
       '/preferences' => const PreferencesScreen(),
@@ -68,7 +74,35 @@ abstract final class AppRouter {
       '/privacy' => const PrivacyScreen(),
       _ => const _MissingRouteScreen(),
     };
-    return MaterialPageRoute<dynamic>(settings: settings, builder: (context) => page);
+    const privateRoutes = {'/cart', '/checkout', '/payment-method', '/wallet',
+      '/pickup-time', '/payment', '/payment-status', '/order-detail', '/receipt',
+      '/pickup-code', '/edit-profile', '/security', '/order-history'};
+    return MaterialPageRoute<dynamic>(settings: settings, builder: (context) =>
+      privateRoutes.contains(settings.name) ? _PrivateRouteGuard(child: page) : page);
+  }
+}
+
+class _PrivateRouteGuard extends StatelessWidget {
+  const _PrivateRouteGuard({required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    if (AppScope.of(context).isLoggedIn) return child;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Masuk diperlukan')),
+      body: Padding(padding: const EdgeInsets.all(24), child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Icon(Icons.lock_outline, size: 42),
+          const SizedBox(height: 20),
+          const Text('Masuk untuk mengakses akun dan pesananmu.', textAlign: TextAlign.center),
+          const SizedBox(height: 24),
+          FilledButton(onPressed: () => Navigator.pushNamed(context, '/login'), child: const Text('Masuk')),
+          OutlinedButton(onPressed: () => AppRouter.goTab(context, 0), child: const Text('Lanjut sebagai tamu')),
+        ],
+      )),
+    );
   }
 }
 

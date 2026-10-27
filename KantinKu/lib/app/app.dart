@@ -68,7 +68,24 @@ class KantinKuApp extends StatelessWidget {
         initialRoute: '/',
         builder: (context, child) => ColoredBox(
           color: Theme.of(context).scaffoldBackgroundColor,
-          child: Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600), child: child!)),
+          child: Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 600), child: Column(children: [
+            if (store.persistenceError != null) SafeArea(bottom: false, child: Material(
+              color: Theme.of(context).colorScheme.errorContainer,
+              child: Padding(padding: const EdgeInsets.fromLTRB(16, 8, 8, 8), child: Row(children: [
+                Expanded(child: Text(store.persistenceError!, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onErrorContainer))),
+                TextButton(onPressed: store.busy ? null : () async {
+                  try {
+                    if (store.initializationFailed) {
+                      await store.retryInitialization();
+                    } else {
+                      await store.retryPendingWrites();
+                    }
+                  } catch (_) { /* The persistent banner reports the failure. */ }
+                }, child: const Text('Coba lagi')),
+              ])),
+            )),
+            Expanded(child: child!),
+          ]))),
         ),
       ),
     ),

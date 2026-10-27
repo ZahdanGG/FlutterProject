@@ -4,8 +4,31 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../order/presentation/widgets/order_widgets.dart';
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
+  @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  bool submitting = false;
+  Future<void> pay() async {
+    final store = AppScope.of(context);
+    if (!store.isLoggedIn) {
+      await Navigator.pushNamed(context, '/login');
+      return;
+    }
+    if (submitting) return;
+    setState(() => submitting = true);
+    try {
+      final order = await store.checkout();
+      if (mounted) await Navigator.pushReplacementNamed(context, '/payment', arguments: order.id);
+    } catch (error) {
+      if (mounted) showMessage(context, error.toString());
+    } finally {
+      if (mounted) setState(() => submitting = false);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final store = AppScope.of(context);
@@ -28,15 +51,15 @@ class CheckoutScreen extends StatelessWidget {
           TextButton(onPressed: () => Navigator.pushNamed(context, '/cart'), child: const Text('Ubah keranjang')),
         ])),
         const SizedBox(height: 18), const SectionHeading('Waktu pengambilan'), const SizedBox(height: 6),
-        const Text('Pilih slot sebelum melanjutkan pembayaran', style: TextStyle(fontSize: 12)), const SizedBox(height: 10),
-        _ChoiceRow(label: store.pickupSlot ?? 'Pilih waktu ambil', icon: Icons.schedule, route: '/pickup-time'),
+        Text('${store.pickupDate.day}/${store.pickupDate.month}/${store.pickupDate.year}', style: const TextStyle(fontSize: 12)), const SizedBox(height: 10),
+        _ChoiceRow(label: store.pickupSlot == null ? 'Pilih waktu ambil' : pickupLabel(store.pickupDate, store.pickupSlot!), icon: Icons.schedule, route: '/pickup-time'),
         const SizedBox(height: 18), const SectionHeading('Metode pembayaran'), const SizedBox(height: 6),
         const Text('Pilih QRIS atau e-wallet', style: TextStyle(fontSize: 12)), const SizedBox(height: 10),
         _ChoiceRow(label: store.paymentMethod ?? 'Pilih metode pembayaran', icon: Icons.account_balance_wallet_outlined, route: '/payment-method'),
         const SizedBox(height: 18), PriceSummary(subtotal: store.subtotal, fee: store.serviceFee, total: store.total), const SizedBox(height: 14),
-        const InfoBox('Status lunas setelah pembayaran berhasil.', icon: Icons.verified_user_outlined),
+        const InfoBox('DEMO — tidak ada uang sungguhan yang dipindahkan. Status lunas hanya hasil simulasi.', icon: Icons.verified_user_outlined),
       ]),
-      bottomNavigationBar: SafeArea(child: Padding(padding: const EdgeInsets.all(20), child: AppButton(label: complete ? 'Bayar ${rupiah(store.total)}' : 'Pilih waktu dan pembayaran', onPressed: complete ? () => foundationNotice(context) : null))),
+      bottomNavigationBar: SafeArea(child: Padding(padding: const EdgeInsets.all(20), child: AppButton(label: complete ? 'Bayar ${rupiah(store.total)}' : 'Pilih waktu dan pembayaran', loading: submitting, onPressed: complete ? pay : null))),
     );
   }
 }

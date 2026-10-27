@@ -45,6 +45,7 @@ class _AccountFieldState extends State<AccountField> {
           ),
           const SizedBox(height: 8),
           TextFormField(
+            key: ValueKey('field-${widget.label}'),
             controller: widget.controller,
             enabled: widget.enabled,
             keyboardType: widget.keyboardType,

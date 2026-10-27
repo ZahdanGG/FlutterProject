@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/app_scope.dart';
+import '../../../../app/app_router.dart';
+
 import '../widgets/account_field.dart';
 import '../../../../core/widgets/app_widgets.dart';
 
@@ -29,6 +32,26 @@ class _LoginPanelState extends State<LoginPanel> {
   final _form = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  bool _submitting = false;
+  String? _error;
+
+  Future<void> _submit() async {
+    if (_submitting || !_form.currentState!.validate()) return;
+    final store = AppScope.of(context);
+    setState(() { _submitting = true; _error = null; });
+    try {
+      await store.login(email: _email.text.trim(), password: _password.text);
+      if (!mounted) return;
+      _password.clear();
+      if (ModalRoute.of(context)?.settings.name == '/login') {
+        Navigator.pop(context, true);
+      }
+    } catch (error) {
+      if (mounted) setState(() => _error = error.toString());
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -108,13 +131,12 @@ class _LoginPanelState extends State<LoginPanel> {
                       child: const Text('Lupa password?'),
                     ),
                   ),
+                  if (_error != null) ...[
+                    InfoBox(_error!, error: true),
+                    const SizedBox(height: 12),
+                  ],
                   const SizedBox(height: 8),
-                  FilledButton(
-                    onPressed: () {
-                      if (_form.currentState!.validate()) foundationNotice(context);
-                    },
-                    child: const Text('Masuk'),
-                  ),
+                  AppButton(label: 'Masuk', onPressed: _submit, loading: _submitting),
                 ],
               ),
             ),
@@ -126,8 +148,12 @@ class _LoginPanelState extends State<LoginPanel> {
             onPressed: () => Navigator.pushNamed(context, '/register-role'),
             child: const Text('Daftar'),
           ),
+          if (!widget.withBrand)
+            TextButton(onPressed: () => AppRouter.goTab(context, 0), child: const Text('Lanjut sebagai tamu')),
           const SizedBox(height: 12),
           const InfoBox('Tanpa akun, kamu tetap bisa melihat menu dan kantin di Home atau Browse.'),
+          const SizedBox(height: 12),
+          Text('DEMO lokal • Buat akun di perangkat ini. Gunakan password khusus demo.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
     );

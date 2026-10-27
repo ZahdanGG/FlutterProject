@@ -8,13 +8,16 @@ import '../../models/kantin_order.dart';
 import '../widgets/order_widgets.dart';
 
 class OrderScreen extends StatefulWidget {
-  const OrderScreen({super.key});
+  const OrderScreen({super.key, this.initialHistory = false});
+  final bool initialHistory;
   @override
   State<OrderScreen> createState() => _OrderScreenState();
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  bool history = false;
+  late bool history;
+  @override
+  void initState() { super.initState(); history = widget.initialHistory; }
   @override
   Widget build(BuildContext context) {
     final store = AppScope.of(context);
@@ -37,7 +40,7 @@ class _OrderScreenState extends State<OrderScreen> {
     );
     final orders = store.orders.where((o) => history ? !o.status.isActive : o.status.isActive).toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Order'), automaticallyImplyLeading: false),
+      appBar: AppBar(title: const Text('Order'), automaticallyImplyLeading: widget.initialHistory),
       body: ListView(padding: const EdgeInsets.all(20), children: [
         if (history) ...[Text('Riwayat pesanan', style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 16)],
         Wrap(spacing: 8, children: [
@@ -65,7 +68,7 @@ class _OrderScreenState extends State<OrderScreen> {
             const SizedBox(height: 8),
             Text(order.items.map((l) => '${l.food.name} ×${l.quantity}').join(' + '), style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 8),
-            Text('${order.pickupSlot} · ${rupiah(order.total)}', style: Theme.of(context).textTheme.bodySmall),
+            Text('${pickupLabel(order.pickupDate, order.pickupSlot)} · ${rupiah(order.total)}', style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 12),
             AppButton(label: 'Detail pesanan', outlined: true, onPressed: () => Navigator.pushNamed(context, '/order-detail', arguments: order.id)),
             if (order.pickupCode.isNotEmpty) TextButton(onPressed: () => Navigator.pushNamed(context, '/receipt', arguments: order.id), child: const Text('Lihat bukti pembayaran')),

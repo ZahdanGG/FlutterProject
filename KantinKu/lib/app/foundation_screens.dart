@@ -12,7 +12,7 @@ class FoundationBrowseScreen extends StatelessWidget {
     body: ListView(padding: const EdgeInsets.all(20), children: [
       Text('Temukan kantinmu', style: Theme.of(context).textTheme.headlineSmall),
       const SizedBox(height: 12),
-      const InfoBox('Tahap UI Dasar: Masih dalam pengembangan'),
+      const InfoBox('Tahap UI Dasar: eksplorasi lengkap dan filter kantin tersedia pada ZIP 3. Katalog menu sudah dapat dilihat.'),
       const SizedBox(height: 20),
       AppButton(label: 'Lihat menu', onPressed: () => Navigator.pushNamed(context, '/menus')),
       for (final canteen in AppScope.of(context).canteens) ListTile(

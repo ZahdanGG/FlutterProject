@@ -7,6 +7,9 @@ import '../../../order/presentation/widgets/order_widgets.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
+  void mutate(BuildContext context, VoidCallback action) {
+    try { action(); } catch (error) { showMessage(context, error.toString()); }
+  }
   @override
   Widget build(BuildContext context) {
     final store = AppScope.of(context);
@@ -23,12 +26,12 @@ class CartScreen extends StatelessWidget {
               Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(line.food.name, style: Theme.of(context).textTheme.titleMedium), const SizedBox(height: 8), Text(rupiah(line.food.price), style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600)),
               ])),
-              IconButton(tooltip: 'Hapus ${line.food.name}', onPressed: () => store.removeFromCart(line.food.id), icon: const Icon(Icons.delete_outline, size: 20)),
+              IconButton(tooltip: 'Hapus ${line.food.name}', onPressed: () => mutate(context, () => store.removeFromCart(line.food.id)), icon: const Icon(Icons.delete_outline, size: 20)),
             ]),
             const SizedBox(height: 12),
-            Row(children: [Text(rupiah(line.total), style: const TextStyle(fontWeight: FontWeight.w700)), const Spacer(), QuantitySelector(value: line.quantity, min: 0, onChanged: (qty) => store.setQuantity(line.food.id, qty))]),
+            Row(children: [Text(rupiah(line.total), style: const TextStyle(fontWeight: FontWeight.w700)), const Spacer(), QuantitySelector(value: line.quantity, min: 0, onChanged: (qty) => mutate(context, () => store.setQuantity(line.food.id, qty)))]),
             const SizedBox(height: 8),
-            TextFormField(key: ValueKey('note-${line.food.id}'), initialValue: line.note, maxLength: 200, decoration: const InputDecoration(labelText: 'Catatan untuk kantin', hintText: 'Contoh: tidak terlalu pedas', counterText: ''), onChanged: (text) => store.setItemNote(line.food.id, text)),
+            TextFormField(key: ValueKey('note-${line.food.id}'), initialValue: line.note, maxLength: 200, decoration: const InputDecoration(labelText: 'Catatan untuk kantin', hintText: 'Contoh: tidak terlalu pedas', counterText: ''), onChanged: (text) => mutate(context, () => store.setItemNote(line.food.id, text))),
           ]))),
           TextButton.icon(onPressed: () => Navigator.pushNamed(context, '/canteen', arguments: store.canteenById(store.cartLines.first.food.canteenId)), icon: const Icon(Icons.add), label: const Text('Tambah menu dari kantin ini')),
           const SizedBox(height: 16), PriceSummary(subtotal: store.subtotal, fee: store.serviceFee, total: store.total), const SizedBox(height: 16),

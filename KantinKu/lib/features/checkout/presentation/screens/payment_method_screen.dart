@@ -7,7 +7,7 @@ class PaymentMethodScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Metode pembayaran')), body: ListView(padding: const EdgeInsets.all(20), children: [
     Text('Bayar dengan nyaman', style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 12), const Text('Pilih QRIS atau dompet digital.'), const SizedBox(height: 24),
-    PaymentOption(icon: Icons.qr_code, title: 'QRIS', subtitle: 'Pindai lewat aplikasi pembayaran', onTap: () { AppScope.of(context).setPaymentMethod('QRIS'); Navigator.pop(context); }),
+    PaymentOption(icon: Icons.qr_code, title: 'QRIS', subtitle: 'Pindai lewat aplikasi pembayaran', onTap: () { try { AppScope.of(context).setPaymentMethod('QRIS'); Navigator.pop(context); } catch (error) { showMessage(context, error.toString()); } }),
     const SizedBox(height: 12),
     PaymentOption(icon: Icons.account_balance_wallet_outlined, title: 'Dompet digital', subtitle: 'GoPay, OVO, DANA, ShopeePay', onTap: () async { final selected = await Navigator.pushNamed(context, '/wallet'); if (selected == true && context.mounted) Navigator.pop(context); }),
   ]));
@@ -18,7 +18,7 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Dompet digital')), body: ListView(padding: const EdgeInsets.all(20), children: [
     Text('Pilih e-wallet', style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 24),
-    for (final wallet in ['GoPay', 'OVO', 'DANA', 'ShopeePay']) Padding(padding: const EdgeInsets.only(bottom: 14), child: PaymentOption(icon: Icons.account_balance_wallet_outlined, title: wallet, subtitle: 'Konfirmasi di aplikasi $wallet', onTap: () { AppScope.of(context).setPaymentMethod(wallet); Navigator.pop(context, true); })),
+    for (final wallet in ['GoPay', 'OVO', 'DANA', 'ShopeePay']) Padding(padding: const EdgeInsets.only(bottom: 14), child: PaymentOption(icon: Icons.account_balance_wallet_outlined, title: wallet, subtitle: 'Konfirmasi di aplikasi $wallet', onTap: () { try { AppScope.of(context).setPaymentMethod(wallet); Navigator.pop(context, true); } catch (error) { showMessage(context, error.toString()); } })),
   ]));
 }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/app_router.dart';
 import '../../../../app/app_scope.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../auth/presentation/screens/login_screen.dart';
@@ -21,11 +20,7 @@ class MeScreen extends StatelessWidget {
         children: [
           if (user == null) ...[
             const LoginPanel(withBrand: true),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () => store.setPreviewMode(true),
-              child: const Text('Pratinjau profil masuk — Tahap 1'),
-            ),
+
           ] else ...[
             AppCard(
               child: Column(
@@ -35,7 +30,6 @@ class MeScreen extends StatelessWidget {
                     CircleAvatar(
                       radius: 28,
                       backgroundColor: colors.secondaryContainer,
-                      foregroundImage: user.id == 'preview' ? const AssetImage('assets/images/avatars/anjari.png') : null,
                       child: Text(user.name.trim().isEmpty ? 'K' : user.name.trim()[0].toUpperCase()),
                     ),
                     const SizedBox(width: 14),
@@ -66,8 +60,8 @@ class MeScreen extends StatelessWidget {
               padding: EdgeInsets.zero,
               child: Column(children: [
                 _AccountLink(Icons.edit_outlined, 'Edit profil', () => Navigator.pushNamed(context, '/edit-profile')),
-                _AccountLink(Icons.receipt_long_outlined, 'Riwayat pesanan', () => AppRouter.goTab(context, 1)),
-                _AccountLink(Icons.favorite_border, 'Menu favorit', () => foundationNotice(context)),
+                _AccountLink(Icons.receipt_long_outlined, 'Riwayat pesanan', () => Navigator.pushNamed(context, '/order-history')),
+                _AccountLink(Icons.favorite_border, 'Menu favorit', () => Navigator.pushNamed(context, '/favorites')),
                 _AccountLink(Icons.schedule, 'Preferensi waktu ambil', () => Navigator.pushNamed(context, '/preferences')),
                 _AccountLink(Icons.shield_outlined, 'Keamanan akun', () => Navigator.pushNamed(context, '/security')),
               ]),
@@ -85,12 +79,17 @@ class MeScreen extends StatelessWidget {
               style: FilledButton.styleFrom(backgroundColor: colors.errorContainer, foregroundColor: colors.onErrorContainer),
               onPressed: () async {
                 final confirmed = await confirmAction(context, title: 'Keluar dari akun?', message: 'Kamu masih bisa melihat menu sebagai tamu. Masuk lagi untuk memesan dan melihat pesananmu.', confirmLabel: 'Keluar');
-                if (confirmed) store.setPreviewMode(false);
+                if (!confirmed || !context.mounted) return;
+                try {
+                  await store.logout();
+                } catch (error) {
+                  if (context.mounted) showMessage(context, error.toString());
+                }
               },
               child: const Text('Keluar'),
             ),
             const SizedBox(height: 12),
-            const InfoBox('Pratinjau UI Tahap 1. Profil dan pesanan ini merupakan contoh, bukan session akun.'),
+            const InfoBox('Akun DEMO lokal. Data profil dan pesanan tersimpan pada perangkat ini.'),
           ],
         ],
       ),

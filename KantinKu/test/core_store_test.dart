@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:KantinKu/core/services/app_store.dart';
-import 'package:KantinKu/features/order/models/kantin_order.dart';
+import 'package:kantinku/core/services/app_store.dart';
+import 'package:kantinku/features/order/models/kantin_order.dart';
 
 void main() {
   test('quantity and totals share one source and remove at zero', () {
@@ -34,16 +34,12 @@ void main() {
     expect(OrderStatus.ready.canTransitionTo(OrderStatus.completed), isTrue);
     expect(OrderStatus.completed.canTransitionTo(OrderStatus.pending), isFalse);
   });
-  test('foundation preview remains explicit and guest has no synthetic orders', () {
+  test('guest state never impersonates an authenticated account', () {
     final store = AppStore();
     expect(store.user, isNull);
     expect(store.orders, isEmpty);
-    store.setPreviewMode(true);
-    expect(store.previewMode, isTrue);
-    expect(store.user!.id, 'preview');
-    expect(store.orders.single.total, 23000);
-    store.setPreviewMode(false);
-    expect(store.orders, isEmpty);
+    expect(store.isLoggedIn, isFalse);
+    expect(store.previewMode, isFalse);
     store.dispose();
   });
 }

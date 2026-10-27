@@ -1,3 +1,4 @@
+import '../../../../core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import '../../../../app/app_scope.dart';
 import '../../../../core/widgets/app_widgets.dart';
@@ -20,7 +21,7 @@ class PickupCodeScreen extends StatelessWidget {
           Text('KODE PENGAMBILAN', style: TextStyle(color: c.onPrimary, fontSize: 11, letterSpacing: 1.5)), const SizedBox(height: 16),
           Text(order.pickupCode, textAlign: TextAlign.center, style: TextStyle(color: c.onPrimary, fontSize: 32, fontWeight: FontWeight.w700)), const SizedBox(height: 12),
           Text('#${order.id} · ${store.user?.name ?? ''}', style: TextStyle(color: c.onPrimary, fontSize: 12)), const SizedBox(height: 20),
-          Text('${store.canteenById(order.canteenId).name} · Loket A\n${order.pickupSlot}', textAlign: TextAlign.center, style: TextStyle(color: c.onPrimary, height: 1.8)),
+          Text('${store.canteenById(order.canteenId).name}\n${pickupLabel(order.pickupDate, order.pickupSlot)}', textAlign: TextAlign.center, style: TextStyle(color: c.onPrimary, height: 1.8)),
         ])),
         const SizedBox(height: 24), Text('Cara mengambil', style: Theme.of(context).textTheme.titleMedium), const SizedBox(height: 12),
         Text('1. Datang ke ${store.canteenById(order.canteenId).location}.\n2. Tunjukkan kode ${order.pickupCode} ke petugas.\n3. Periksa dan ambil ${order.items.fold<int>(0, (n, l) => n + l.quantity)} item pesananmu.', style: const TextStyle(height: 1.9)),

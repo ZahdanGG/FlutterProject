@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:KantinKu/app/app.dart';
-import 'package:KantinKu/app/app_shell.dart';
-import 'package:KantinKu/core/services/app_store.dart';
-import 'package:KantinKu/features/home/presentation/screens/home_screen.dart';
+import 'package:kantinku/app/app.dart';
+import 'package:kantinku/app/app_shell.dart';
+import 'package:kantinku/core/services/app_store.dart';
+import 'package:kantinku/core/services/local_store.dart';
+import 'package:kantinku/features/home/presentation/screens/home_screen.dart';
 
 void main() {
   for (final size in const [Size(320, 640), Size(412, 917), Size(480, 960)]) {
@@ -12,7 +13,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      final store = AppStore();
+      final store = AppStore(persistence: MemoryLocalStore());
       await store.initialize();
       addTearDown(store.dispose);
       AppShell.selectedTab.value = 0;
@@ -31,7 +32,7 @@ void main() {
   }
 
   testWidgets('guest ordering opens login gate and dismissal preserves detail', (tester) async {
-    final store = AppStore();
+    final store = AppStore(persistence: MemoryLocalStore());
     await store.initialize();
     addTearDown(store.dispose);
     AppShell.selectedTab.value = 0;

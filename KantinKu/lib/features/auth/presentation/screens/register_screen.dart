@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/app_scope.dart';
+
 import '../widgets/account_field.dart';
 import '../../../../core/widgets/app_widgets.dart';
 
@@ -20,6 +22,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _confirm = TextEditingController();
   final _institution = TextEditingController();
   final _department = TextEditingController();
+  bool _submitting = false;
+  String? _error;
+
+  Future<void> _submit() async {
+    if (_submitting || !_form.currentState!.validate()) return;
+    final store = AppScope.of(context);
+    setState(() { _submitting = true; _error = null; });
+    try {
+      await store.register(name: _name.text.trim(), email: _email.text.trim(),
+        phone: _phone.text.trim(), password: _password.text,
+        confirmPassword: _confirm.text, role: widget.role,
+        institution: _institution.text.trim(), department: _department.text.trim());
+      if (!mounted) return;
+      _password.clear(); _confirm.clear();
+      await Navigator.pushReplacementNamed(context, '/auth-success');
+    } catch (error) {
+      if (mounted) setState(() => _error = error.toString());
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -41,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(title: Text('Daftar ${widget.role}')),
       body: Form(
         key: _form,
-        child: ListView(
+        child: FormScrollView(
           padding: const EdgeInsets.all(20),
           children: [
             Text('Langkah 2 dari 2', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary)),
@@ -63,12 +86,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
             AccountField(label: labels.$2, controller: _department, hint: '${labels.$2} kamu', validator: requiredAccountValue),
             const Text('Data untuk profil; tanpa KTP atau nomor induk.', style: TextStyle(fontSize: 12)),
             const SizedBox(height: 20),
-            FilledButton(
-              onPressed: () {
-                if (_form.currentState!.validate()) foundationNotice(context);
-              },
-              child: const Text('Buat akun'),
-            ),
+            if (_error != null) ...[
+              InfoBox(_error!, error: true),
+              const SizedBox(height: 12),
+            ],
+            if (_submitting) ...[
+              const InfoBox('Sedang membuat akun. Mohon tunggu.', icon: Icons.schedule),
+              const SizedBox(height: 12),
+            ],
+            AppButton(label: 'Buat akun', onPressed: _submit, loading: _submitting),
+            const SizedBox(height: 12),
+            Text('DEMO lokal • Akun hanya tersimpan pada perangkat ini.', style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
       ),
